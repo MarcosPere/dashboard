@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./dashboard.css";
 import Chart from "react-google-charts";
 
 function Dashboard() {
   const TITULO = "Quantidade de cadastros primeiro semestre";
+  const ANIMACAO = { duration: 1000, easing: "out", startup: true };
 
   const [dados, setDados] = useState([
     ["Mês", "Quantidade"],
@@ -14,6 +15,24 @@ function Dashboard() {
     ["Maio", 80],
     ["Junho", 27],
   ]);
+
+  useEffect(() => {
+    function alterarDados() {
+      const dadosGraficos = dados.map((linha) => {
+        if (Number.isInteger(linha[1])) {
+          linha[1] = Math.floor(Math.random() * 101);
+        }
+        return linha;
+      });
+      setDados(dadosGraficos);
+    }
+
+    const intervalId = setInterval(() => alterarDados(), 5000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [dados]);
 
   return (
     <div>
@@ -65,7 +84,24 @@ function Dashboard() {
         height={"300px"}
         chartType={"LineChart"}
         data={dados}
-        options={{}}
+        options={{
+          title: TITULO,
+          hAxis: { title: "Mês" },
+          vAxis: { title: "Quantidade" },
+          animation: ANIMACAO,
+        }}
+      />
+      <Chart
+        width={"400px"}
+        height={"300px"}
+        chartType={"AreaChart"}
+        data={dados}
+        options={{
+          title: TITULO,
+          hAxis: { title: "Mês" },
+          vAxis: { title: "Quantidade" },
+          animation: ANIMACAO,
+        }}
       />
     </div>
   );
